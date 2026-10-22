@@ -1,712 +1,1331 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Evaluación Interactiva: Estándares de Software</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        glass: {
-                            base: 'rgba(15, 23, 42, 0.75)',
-                            card: 'rgba(30, 41, 59, 0.65)',
-                            border: 'rgba(255, 255, 255, 0.12)',
-                            glow: 'rgba(99, 102, 241, 0.25)'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif']
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass - Software Standards & Governance Suite</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            glass: {
+              border: 'rgba(255, 255, 255, 0.18)',
+              panel: 'rgba(15, 23, 42, 0.62)',
+              panelLight: 'rgba(255, 255, 255, 0.07)',
+              glow: 'rgba(99, 102, 241, 0.35)',
             }
+          }
         }
-    </script>
+      }
+    }
+  </script>
 
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-            min-height: 100vh;
-            color: #f8fafc;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
+  <style>
+    /* LIQUID GLASS ANIMATED BACKGROUND MESH */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #090d16;
+      color: #f8fafc;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-        /* Glassmorphism Styles */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.55);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+    .liquid-mesh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      filter: blur(80px);
+      opacity: 0.85;
+      pointer-events: none;
+    }
 
-        .glass-btn {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.25s ease;
-        }
+    .liquid-blob {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 18s infinite ease-in-out alternate;
+    }
 
-        .glass-btn:active {
-            transform: scale(0.98);
-        }
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(59, 130, 246, 0) 70%);
+      top: -100px;
+      left: -100px;
+      animation-duration: 22s;
+    }
 
-        /* Estado de Opciones */
-        .option-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    .blob-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(147, 51, 234, 0) 70%);
+      bottom: -150px;
+      right: -100px;
+      animation-duration: 26s;
+    }
 
-        .option-card.correct {
-            background: rgba(16, 185, 129, 0.25) !important;
-            border-color: #10b981 !important;
-            color: #6ee7b7 !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-        }
+    .blob-3 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, rgba(14, 165, 233, 0) 70%);
+      top: 40%;
+      left: 30%;
+      animation-duration: 19s;
+    }
 
-        .option-card.incorrect {
-            background: rgba(239, 68, 68, 0.25) !important;
-            border-color: #ef4444 !important;
-            color: #fca5a5 !important;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
+    @keyframes float {
+      0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+      33% { transform: translate(60px, -80px) scale(1.1) rotate(120deg); }
+      66% { transform: translate(-40px, 50px) scale(0.95) rotate(240deg); }
+      100% { transform: translate(0px, 0px) scale(1) rotate(360deg); }
+    }
 
-        .mesh-glow {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(90px);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.4;
-        }
+    /* LIQUID GLASS UI COMPONENTS */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-radius: 1.25rem;
+    }
 
-        /* Prevenir desbordamientos móviles */
-        * {
-            box-sizing: border-box;
-            max-width: 100%;
-        }
-    </style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(99, 102, 241, 0.25);
+    }
+
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: all 0.25s ease;
+    }
+
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+    }
+
+    .glass-input {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: #f8fafc;
+    }
+
+    .glass-input:focus {
+      outline: none;
+      border-color: #818cf8;
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+    }
+
+    /* CUSTOM SCROLLBAR */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+  </style>
 </head>
-<body class="p-3 sm:p-6 flex flex-col justify-between min-h-screen">
 
-    <!-- Luces de fondo (Glow Effects) -->
-    <div class="mesh-glow bg-indigo-600 top-0 -left-20"></div>
-    <div class="mesh-glow bg-cyan-600 bottom-0 -right-20"></div>
+<body class="flex flex-col min-h-screen">
 
-    <div class="max-w-4xl mx-auto w-full z-10">
+  <!-- DYNAMIC LIQUID BACKGROUND MESH -->
+  <div class="liquid-mesh">
+    <div class="liquid-blob blob-1"></div>
+    <div class="liquid-blob blob-2"></div>
+    <div class="liquid-blob blob-3"></div>
+  </div>
+
+  <!-- GLASS HEADER & NAVIGATION -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/60 border-b border-white/10 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showTab('study')">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/30">
+          <div class="w-full h-full bg-slate-950/80 backdrop-blur-md rounded-[15px] flex items-center justify-center">
+            <i class="fa-solid fa-flask text-indigo-400 text-lg"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-200 bg-clip-text text-transparent">
+            Standards Engine
+          </h1>
+          <p class="text-[11px] text-indigo-300/70 font-medium hidden sm:block">Liquid Glass Assessment Platform</p>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="flex items-center space-x-2">
+        <button id="nav-study" onclick="showTab('study')" class="glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 text-white">
+          <i class="fa-solid fa-book-open text-indigo-400"></i>
+          <span>Guía Teórica</span>
+        </button>
+        <button id="nav-quiz" onclick="showTab('quiz-config')" class="glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 text-slate-300">
+          <i class="fa-solid fa-circle-play text-cyan-400"></i>
+          <span>Evaluación</span>
+          <span class="bg-indigo-500/30 text-indigo-200 text-[10px] px-2 py-0.5 rounded-full border border-indigo-400/30 font-bold ml-1">30+ Qs</span>
+        </button>
+        <button id="nav-report" onclick="showTab('report')" class="glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 text-slate-300 hidden">
+          <i class="fa-solid fa-chart-pie text-purple-400"></i>
+          <span>Reporte</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full relative z-10">
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: THEORY / STUDY GUIDE (SEARCH + FILTERABLE CARDS) -->
+    <!-- ================================================================= -->
+    <section id="tab-study" class="space-y-8">
+      
+      <!-- HERO BANNER -->
+      <div class="glass-panel p-6 sm:p-10 relative overflow-hidden">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
-        <!-- Header Principal -->
-        <header class="glass-panel rounded-2xl p-4 sm:p-6 mb-6 text-center relative overflow-hidden">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold mb-2">
-                <i class="fa-solid fa-graduation-cap"></i> SENA ADSO - Calidad de Software
-            </div>
-            <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-white mb-2">
-                Evaluación: Estándares & Ciclos de Vida
-            </h1>
-            <p class="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-                ISO/IEC/IEEE 12207 • Modelos SDLC • IEEE 829 • ISO 37000
-            </p>
-        </header>
+        <div class="max-w-3xl space-y-4">
+          <span class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-400/30 text-indigo-300 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-widest backdrop-blur-md">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+            Centro de Aprendizaje Interactivo
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            Estándares de Ingeniería & Gobernanza de Software
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            Repasa los conceptos clave sobre ISO/IEC/IEEE 12207, Modelos SDLC, IEEE 829 e ISO 37000. Utiliza el buscador interactivo para filtrar por estándar o inicie directamente la evaluación.
+          </p>
 
-        <!-- Selector de Modo / Navegación Móvil -->
-        <div class="grid grid-cols-2 gap-2 mb-6">
-            <button onclick="setMode('exam')" id="btn-exam" class="glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border-indigo-500/50 bg-indigo-600/30 text-white">
-                <i class="fa-solid fa-stopwatch text-indigo-400"></i> Modo Examen
+          <!-- Search & Controls -->
+          <div class="pt-4 flex flex-wrap gap-4 items-center">
+            <div class="relative flex-grow max-w-md">
+              <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+              <input type="text" id="study-search" oninput="filterStudyCards()" placeholder="Buscar por palabra clave (ej. ISO 12207, Scrum, IEEE 829)..." class="glass-input w-full pl-11 pr-4 py-3 rounded-xl text-xs sm:text-sm">
+            </div>
+
+            <button onclick="startQuizMode('exam')" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/25 transition-all text-xs sm:text-sm flex items-center space-x-2">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Iniciar Modo Examen</span>
             </button>
-            <button onclick="setMode('study')" id="btn-study" class="glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-slate-300">
-                <i class="fa-solid fa-book-open text-cyan-400"></i> Modo Estudio
+            <button onclick="startQuizMode('practice')" class="glass-btn text-slate-200 font-bold px-6 py-3 rounded-xl text-xs sm:text-sm flex items-center space-x-2">
+              <i class="fa-solid fa-lightbulb text-amber-400"></i>
+              <span>Modo Práctica</span>
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- THEORY CARDS GRID -->
+      <div id="theory-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1: ISO 12207 -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 theory-card" data-keywords="iso 12207 procesos ciclo vida soporte tecnicos organizacionales">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-400 text-xl font-bold">
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">ISO/IEC/IEEE 12207</h3>
+              <p class="text-xs text-indigo-300/80">Procesos del Ciclo de Vida del Software</p>
+            </div>
+          </div>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Estructura estandarizada que establece el ciclo de vida del software abarcando desde la concepción de requerimientos hasta el retiro del producto.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-indigo-400">Procesos Técnicos:</strong> Análisis de Requisitos, Diseño Arquitectónico, Implementación, Integración, Verificación, Validación, Mantenimiento y Retiro.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-cyan-400">Procesos de Soporte:</strong> Aseguramiento de Calidad (QA), Gestión de Configuración, Verificación, Validación, Auditoría y Resolución de Problemas.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-purple-400">Procesos Organizacionales:</strong> Gestión de Portafolio, Gestión de Infraestructura, Recursos Humanos y Gestión del Conocimiento.
+            </div>
+          </div>
         </div>
 
-        <!-- Panel del Test -->
-        <main id="quiz-container" class="glass-panel rounded-2xl p-4 sm:p-8 relative">
-            
-            <!-- Barra de Progreso e Info -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-2 mb-6 border-b border-slate-700/50 pb-4">
-                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-                    <span id="question-badge" class="px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/30">
-                        Pregunta 1/25
-                    </span>
-                    <span id="timer" class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30 hidden">
-                        <i class="fa-regular fa-clock"></i> 20:00
-                    </span>
-                </div>
-                <!-- Mini Barra de Estado -->
-                <div class="w-full sm:w-48 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
-                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full w-0 transition-all duration-300"></div>
-                </div>
+        <!-- CARD 2: CICLOS DE VIDA (SDLC) -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 theory-card" data-keywords="sdlc ciclo vida cascada waterfall espiral boehm agil scrum devops v-model">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-xl font-bold">
+              <i class="fa-solid fa-rotate"></i>
             </div>
-
-            <!-- Pregunta -->
-            <h2 id="question-text" class="text-base sm:text-xl font-bold text-slate-100 mb-6 leading-relaxed">
-                Cargando pregunta...
-            </h2>
-
-            <!-- Lista de Opciones (Responsive) -->
-            <div id="options-container" class="space-y-3 mb-6">
-                <!-- Se generan dinámicamente -->
+            <div>
+              <h3 class="font-bold text-white text-lg">Modelos de Ciclos de Vida (SDLC)</h3>
+              <p class="text-xs text-cyan-300/80">Estrategias y Paradigmas de Desarrollo</p>
             </div>
-
-            <!-- Explicación (Aparece tras responder) -->
-            <div id="explanation-box" class="hidden p-4 rounded-xl bg-slate-900/80 border border-slate-700 text-xs sm:text-sm text-slate-200 mb-6 animate-fade-in">
-                <div class="font-bold text-cyan-400 mb-1 flex items-center gap-2">
-                    <i class="fa-solid fa-lightbulb"></i> Explicación Técnica:
-                </div>
-                <p id="explanation-text"></p>
+          </div>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Metodologías estructuradas para organizar el flujo de trabajo según la variabilidad de los requisitos y la criticidad del proyecto.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-cyan-400">Cascada (Waterfall):</strong> Fases secuenciales estrictas. Ideal para proyectos con requerimientos 100% estables y normativas rígidas.
             </div>
-
-            <!-- Botones de Control -->
-            <div class="flex justify-between items-center gap-3 pt-2">
-                <button id="btn-prev" onclick="prevQuestion()" class="glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-300 disabled:opacity-30">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> Anterior
-                </button>
-                <button id="btn-next" onclick="nextQuestion()" class="glass-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600/40 text-white hover:bg-indigo-600/60 border-indigo-400/40">
-                    Siguiente <i class="fa-solid fa-arrow-right ml-1"></i>
-                </button>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-purple-400">Espiral (Boehm):</strong> Enfoque iterativo centrado en la evaluación y mitigación continua de riesgos en 4 cuadrantes.
             </div>
-        </main>
-
-        <!-- Pantalla de Resultados Finales -->
-        <section id="results-container" class="glass-panel rounded-2xl p-6 text-center hidden">
-            <div class="w-16 h-16 rounded-full bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center mx-auto mb-4 text-indigo-300 text-2xl">
-                <i class="fa-solid fa-trophy"></i>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-emerald-400">Enfoques Ágiles (Scrum / XP):</strong> Iteraciones cortas (Sprints) que priorizan la entrega temprana de valor y la adaptación al cambio.
             </div>
-            <h2 class="text-2xl font-black mb-2">¡Evaluación Completada!</h2>
-            <p class="text-xs sm:text-sm text-slate-400 mb-6">Resumen de desempeño obtenido:</p>
+          </div>
+        </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-                <div class="p-3 rounded-xl bg-slate-800/50 border border-slate-700">
-                    <div class="text-xs text-slate-400">Puntaje</div>
-                    <div id="final-score" class="text-xl sm:text-2xl font-black text-emerald-400">0/25</div>
-                </div>
-                <div class="p-3 rounded-xl bg-slate-800/50 border border-slate-700">
-                    <div class="text-xs text-slate-400">Porcentaje</div>
-                    <div id="final-percentage" class="text-xl sm:text-2xl font-black text-indigo-400">0%</div>
-                </div>
-                <div class="p-3 rounded-xl bg-slate-800/50 border border-slate-700 col-span-2 sm:col-span-1">
-                    <div class="text-xs text-slate-400">Estado</div>
-                    <div id="final-status" class="text-lg font-bold text-white">Evaluando</div>
-                </div>
+        <!-- CARD 3: IEEE 829 -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 theory-card" data-keywords="ieee 829 pruebas test plan log incident report summary especificacion">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-400 text-xl font-bold">
+              <i class="fa-solid fa-file-lines"></i>
             </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">IEEE 829</h3>
+              <p class="text-xs text-purple-300/80">Documentación de Pruebas de Software</p>
+            </div>
+          </div>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Estándar formal que define la estructura y contenido estandarizado de los artefactos producidos durante el testing.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-purple-400">Planificación:</strong> Test Plan (define alcance, estrategia, recursos, calendario y criterios de parada).
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-indigo-400">Especificación:</strong> Test Design, Test Case Specification, Test Procedure Specification.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-cyan-400">Ejecución y Cierre:</strong> Test Log (bitácora), Test Incident Report (bugs) y Test Summary Report.
+            </div>
+          </div>
+        </div>
 
-            <button onclick="restartQuiz()" class="glass-btn px-6 py-3 rounded-xl text-sm font-bold bg-indigo-600 text-white w-full sm:w-auto">
-                <i class="fa-solid fa-rotate-right mr-2"></i> Intentar de Nuevo
-            </button>
-        </section>
+        <!-- CARD 4: ISO 37000 -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 theory-card" data-keywords="iso 37000 gobernanza gobierno organizacion proposito estrategia riesgo ti">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-400 text-xl font-bold">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">ISO 37000</h3>
+              <p class="text-xs text-amber-300/80">Gobernanza de las Organizaciones</p>
+            </div>
+          </div>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Marco global que orienta a los órganos de gobierno (Board of Directors) a dirigir con propósito, ética y sostenibilidad.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-amber-400">Gobernanza vs Gestión:</strong> El órgano directivo *dirige, evalúa y supervisa*; la gestión operativa *ejecuta e implementa*.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-indigo-400">Propósito Organizacional:</strong> Razón de ser articulada para generar valor sostenible alineado con las partes interesadas.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/50 border border-white/10">
+              <strong class="text-purple-400">Gobernanza del Riesgo:</strong> Evaluación de la incertidumbre para proteger los activos estratégicos y la reputación corporativa.
+            </div>
+          </div>
+        </div>
 
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: QUIZ SELECTION / MODE CONFIG -->
+    <!-- ================================================================= -->
+    <section id="tab-quiz-config" class="hidden max-w-2xl mx-auto py-6">
+      <div class="glass-panel p-6 sm:p-10 text-center space-y-8">
+        
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-[1px] shadow-xl shadow-indigo-500/30">
+          <div class="w-full h-full bg-slate-950/80 rounded-[23px] flex items-center justify-center text-3xl text-indigo-300">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Configuración de Evaluación</h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-2">Selecciona la modalidad de evaluación interactiva que deseas iniciar.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+          
+          <!-- Mode 1: Exam -->
+          <div onclick="startQuizMode('exam')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-indigo-400 transition-all space-y-3 group">
+            <div class="flex items-center justify-between">
+              <i class="fa-solid fa-stopwatch text-2xl text-indigo-400 group-hover:scale-110 transition-transform"></i>
+              <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2.5 py-0.5 rounded-full font-bold uppercase">Cronometrado</span>
+            </div>
+            <h3 class="font-bold text-white text-base group-hover:text-indigo-300">Modo Examen</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              30 preguntas seleccionadas de forma aleatoria con temporizador activo, sin respuestas inmediatas y análisis de resultados al finalizar.
+            </p>
+          </div>
+
+          <!-- Mode 2: Practice -->
+          <div onclick="startQuizMode('practice')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-cyan-400 transition-all space-y-3 group">
+            <div class="flex items-center justify-between">
+              <i class="fa-solid fa-graduation-cap text-2xl text-cyan-400 group-hover:scale-110 transition-transform"></i>
+              <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-2.5 py-0.5 rounded-full font-bold uppercase">Feedback Inmediato</span>
+            </div>
+            <h3 class="font-bold text-white text-base group-hover:text-cyan-300">Modo Práctica</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Avanza a tu propio ritmo recibiendo la explicación conceptual detallada inmediatamente después de responder cada pregunta.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-400/20 text-xs text-indigo-200 flex items-start space-x-3 text-left">
+          <i class="fa-solid fa-circle-info text-indigo-400 text-sm mt-0.5"></i>
+          <span><strong>Aleatoriedad total:</strong> El motor aleatoriza tanto el orden de las preguntas como la ubicación de las opciones de respuesta (A, B, C, D) para asegurar una experiencia dinámica.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: ACTIVE QUIZ INTERFACE -->
+    <!-- ================================================================= -->
+    <section id="tab-quiz" class="hidden max-w-4xl mx-auto space-y-6">
+      
+      <!-- QUIZ TOP CONTROL BAR -->
+      <div class="glass-panel p-4 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Progress Indicator -->
+        <div class="flex items-center space-x-4">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            Pregunta <span id="quiz-current-num" class="text-indigo-400 font-bold text-sm sm:text-base">1</span> / <span id="quiz-total-num">30</span>
+          </span>
+          <div class="w-32 sm:w-48 bg-slate-900/80 rounded-full h-2.5 overflow-hidden border border-white/10">
+            <div id="quiz-progress-bar" class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-2.5 rounded-full transition-all duration-300" style="width: 3%;"></div>
+          </div>
+        </div>
+
+        <!-- Timer & Score Counters -->
+        <div class="flex items-center space-x-3">
+          <div id="quiz-mode-badge" class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-xl text-xs font-bold uppercase">
+            Examen
+          </div>
+          <div class="flex items-center text-slate-200 bg-slate-900/60 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-medium">
+            <i class="fa-regular fa-clock text-indigo-400 mr-2"></i>
+            <span id="quiz-timer">00:00</span>
+          </div>
+          <div class="flex items-center text-emerald-300 bg-emerald-500/10 border border-emerald-400/30 px-3 py-1.5 rounded-xl text-xs font-bold">
+            <i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i>
+            <span id="quiz-score-count">0</span> Pts
+          </div>
+        </div>
+
+      </div>
+
+      <!-- QUESTION CARD CONTAINER -->
+      <div id="question-card" class="glass-panel p-6 sm:p-8 space-y-6">
+        
+        <!-- Category Pill & Info -->
+        <div class="flex items-center justify-between">
+          <span id="question-category" class="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 rounded-full">
+            Categoría
+          </span>
+          <span class="text-xs text-slate-400 font-medium">Opción Múltiple</span>
+        </div>
+
+        <!-- Question Body -->
+        <h3 id="question-text" class="text-base sm:text-xl font-bold text-white leading-relaxed">
+          Cargando pregunta...
+        </h3>
+
+        <!-- Dynamic Options Grid -->
+        <div id="options-container" class="space-y-3">
+          <!-- Rendered via JavaScript -->
+        </div>
+
+        <!-- Practice Mode Feedback Panel -->
+        <div id="explanation-box" class="hidden p-4 rounded-xl text-xs sm:text-sm leading-relaxed border transition-all">
+          <div id="explanation-title" class="font-bold mb-1 flex items-center"></div>
+          <p id="explanation-text" class="text-slate-300"></p>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="flex justify-between items-center pt-4 border-t border-white/10">
+          <button onclick="confirmExitQuiz()" class="text-slate-400 hover:text-rose-400 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-xmark"></i>
+            <span>Abandonar</span>
+          </button>
+          
+          <button id="btn-next" onclick="nextQuestion()" disabled class="glass-btn text-slate-500 font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center space-x-2 cursor-not-allowed">
+            <span>Siguiente Pregunta</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: PERFORMANCE REPORT & DASHBOARD -->
+    <!-- ================================================================= -->
+    <section id="tab-report" class="hidden max-w-4xl mx-auto space-y-8">
+      
+      <!-- SUMMARY SCORE CARD -->
+      <div class="glass-panel p-6 sm:p-10 text-center space-y-8">
+        
+        <div id="report-icon-bg" class="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl font-black shadow-2xl">
+          <i id="report-icon" class="fa-solid fa-trophy"></i>
+        </div>
+
+        <div>
+          <h2 id="report-status-title" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">¡Evaluación Completada!</h2>
+          <p id="report-status-desc" class="text-slate-400 text-xs sm:text-sm mt-2">A continuación se presenta el desglose detallado de tu desempeño.</p>
+        </div>
+
+        <!-- METRICS GRID -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10">
+          <div class="glass-card p-4 rounded-xl">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Puntaje Total</p>
+            <p id="report-score-text" class="text-2xl font-black text-indigo-400 mt-1">0 / 30</p>
+          </div>
+          <div class="glass-card p-4 rounded-xl">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Efectividad</p>
+            <p id="report-percentage-text" class="text-2xl font-black text-cyan-400 mt-1">0%</p>
+          </div>
+          <div class="glass-card p-4 rounded-xl">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tiempo Invertido</p>
+            <p id="report-time-text" class="text-2xl font-black text-purple-400 mt-1">00:00</p>
+          </div>
+          <div class="glass-card p-4 rounded-xl">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dictamen</p>
+            <p id="report-grade-text" class="text-2xl font-black text-emerald-400 mt-1">-</p>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          <button onclick="showTab('quiz-config')" class="bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-indigo-500/30 transition-all text-xs sm:text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Intentar Nueva Evaluación</span>
+          </button>
+          <button onclick="showTab('study')" class="glass-btn text-slate-200 font-semibold px-8 py-3 rounded-xl text-xs sm:text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Repasar Guía Teórica</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- DOMAIN BREAKDOWN -->
+      <div class="glass-panel p-6 sm:p-8 space-y-4">
+        <h3 class="font-bold text-white text-base sm:text-lg flex items-center">
+          <i class="fa-solid fa-chart-bar text-indigo-400 mr-2.5"></i>
+          Rendimiento por Dominio Técnico
+        </h3>
+        <div id="category-breakdown-container" class="space-y-4"></div>
+      </div>
+
+      <!-- FULL REVIEW LIST -->
+      <div class="glass-panel p-6 sm:p-8 space-y-4">
+        <h3 class="font-bold text-white text-base sm:text-lg flex items-center">
+          <i class="fa-solid fa-list-check text-cyan-400 mr-2.5"></i>
+          Revisión Punto por Punto
+        </h3>
+        <div id="questions-review-list" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-2"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 border-t border-white/10 bg-slate-950/80 backdrop-blur-md py-6 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 space-y-1">
+      <p class="font-semibold text-slate-300">Plataforma de Evaluación de Calidad & Gobernanza de Software</p>
+      <p class="text-slate-500">ISO/IEC/IEEE 12207 • SDLC • IEEE 829 • ISO 37000</p>
     </div>
+  </footer>
 
-    <!-- Script del Motor de Preguntas y Evaluación -->
-    <script>
-        // Base de datos de 25 preguntas con opciones aleatorizadas
-        const rawQuestions = [
-            {
-                q: "¿Cuál es el propósito principal del estándar ISO/IEC/IEEE 12207?",
-                options: [
-                    "Definir un marco común para los procesos del ciclo de vida del software.",
-                    "Establecer plantillas únicas para las pruebas de software.",
-                    "Normalizar la gobernanza corporativa en empresas de TI.",
-                    "Garantizar que no existan errores sintácticos en el código."
-                ],
-                correct: 0,
-                exp: "ISO/IEC/IEEE 12207 establece un marco de referencia estructurado para definir, controlar y mejorar los procesos del ciclo de vida del software."
-            },
-            {
-                q: "¿Qué norma internacional define la estructura de documentación para pruebas de software (IEEE 829)?",
-                options: [
-                    "ISO 37000",
-                    "IEEE 829",
-                    "ISO/IEC 25010",
-                    "CMMI Level 3"
-                ],
-                correct: 1,
-                exp: "IEEE 829 es el estándar para la documentación de pruebas de software, especificando formatos como el Plan de Pruebas, Casos de Prueba e Informes."
-            },
-            {
-                q: "En el contexto de ISO 37000, ¿cuál es el pilar fundamental que aborda esta norma?",
-                options: [
-                    "La arquitectura física de los servidores web.",
-                    "La Gobernanza de las Organizaciones y decisiones estratégicas.",
-                    "La optimización de bases de datos relacionales.",
-                    "El diseño de interfaces responsivas UI/UX."
-                ],
-                correct: 1,
-                exp: "ISO 37000 orienta a los órganos de gobierno sobre cómo guiar a las organizaciones de manera ética, responsable y eficiente."
-            },
-            {
-                q: "Dentro del modelo de Ciclo de Vida en Cascada (Waterfall), ¿cuál es su principal característica?",
-                options: [
-                    "Permite realizar cambios ilimitados en cualquier fase del proyecto.",
-                    "Es un enfoque secuencial donde cada fase depende de la finalización de la anterior.",
-                    "Se basa en entregas diarias mediante sprints de 1 semana.",
-                    "No requiere documentación ni diseño previo."
-                ],
-                correct: 1,
-                exp: "El modelo en Cascada es rígido y secuencial: requisitos, diseño, implementación, verificación y mantenimiento en orden lineal."
-            },
-            {
-                q: "Según IEEE 829, ¿qué documento contiene los pasos detallados, datos de entrada y resultados esperados?",
-                options: [
-                    "Plan de Pruebas (Test Plan)",
-                    "Registro de Defectos (Bug Log)",
-                    "Especificación de Caso de Prueba (Test Case Specification)",
-                    "Informe de Cierre de Pruebas"
-                ],
-                correct: 2,
-                exp: "La especificación de casos de prueba detalla las precondiciones, los pasos de ejecución exacta, los datos de prueba y los resultados esperados."
-            },
-            {
-                q: "¿Qué grupo de procesos en ISO/IEC 12207 incluye la Adquisición y el Suministro?",
-                options: [
-                    "Procesos de Acuerdo (Agreement Processes)",
-                    "Procesos Técnicos (Technical Processes)",
-                    "Procesos de Proyecto",
-                    "Procesos de Reutilización"
-                ],
-                correct: 0,
-                exp: "Los Procesos de Acuerdo en ISO 12207 gestionan el establecimiento de contratos entre la entidad adquirente y el proveedor."
-            },
-            {
-                q: "En el modelo Ágil (Scrum), ¿qué artefacto define las condiciones para considerar terminado un incremento?",
-                options: [
-                    "Definition of Done (DoD)",
-                    "Matriz de Trazabilidad",
-                    "Carta del Proyecto",
-                    "Diagrama de Gantt"
-                ],
-                correct: 0,
-                exp: "La Definición de Terminado (DoD) asegura que el incremento cumpla con todos los criterios de calidad y pruebas antes del release."
-            },
-            {
-                q: "¿Cuál de las siguientes opciones describe mejor el concepto de Verification (Verificación)?",
-                options: [
-                    "¿Estamos construyendo el producto correcto para el usuario?",
-                    "¿Estamos construyendo el producto correctamente según las especificaciones?",
-                    "Auditoría externa de estados financieros.",
-                    "Prueba de estrés masiva en producción."
-                ],
-                correct: 1,
-                exp: "Verificación confirma si el software cumple con sus especificaciones técnicas ('¿Construimos el producto correctamente?')."
-            },
-            {
-                q: "¿Cuál de las siguientes opciones describe el concepto de Validation (Validación)?",
-                options: [
-                    "Comprobar si las variables usan camelCase.",
-                    "Confirmar que el software satisface las necesidades reales del usuario en su entorno.",
-                    "Revisar que la base de datos esté normalizada en 3FN.",
-                    "Compilar el código fuente sin advertencias."
-                ],
-                correct: 1,
-                exp: "Validación evalúa si el software cumple con las necesidades reales y expectativas del usuario final ('¿Construimos el producto correcto?')."
-            },
-            {
-                q: "En IEEE 829, ¿cuál es la función de la Lista de Verificación / Criterios de Suspensión?",
-                options: [
-                    "Indicar en qué situaciones graves se deben pausar temporalmente las pruebas.",
-                    "Aprobar el presupuesto del equipo de desarrollo.",
-                    "Eliminar la base de datos de pruebas al finalizar.",
-                    "Sancionar a los desarrolladores con errores."
-                ],
-                correct: 0,
-                exp: "Los criterios de suspensión definen cuándo detener las pruebas (ej. bloqueos críticos o caída del entorno) hasta que se aplique un fix."
-            },
-            {
-                q: "¿Qué modelo de ciclo de vida es más adecuado cuando los requisitos son altamente inciertos o cambian constantemente?",
-                options: [
-                    "Modelo en Cascada (Waterfall)",
-                    "Modelo Espiral o Iterativo/Incremental (Ágil)",
-                    "Modelo V tradicional",
-                    "Despliegue Único Secuencial"
-                ],
-                correct: 1,
-                exp: "Los modelos iterativos e incrementales (Espiral / Ágil) permiten adaptar el desarrollo mediante retroalimentación continua."
-            },
-            {
-                q: "¿Qué componente de ISO 37000 evalúa el impacto de la organización en la sociedad y el medio ambiente?",
-                options: [
-                    "Desempeño Operativo",
-                    "Responsabilidad Social y Sostenibilidad",
-                    "Gestión de Memoria RAM",
-                    "Seguridad de Redes"
-                ],
-                correct: 1,
-                exp: "La gobernanza bajo ISO 37000 contempla la sostenibilidad, ética corporativa y responsabilidad con el entorno."
-            },
-            {
-                q: "Según ISO/IEC 12207, el proceso de 'Mantenimiento' se clasifica dentro de:",
-                options: [
-                    "Procesos Primarios / Técnicos",
-                    "Procesos Organizacionales",
-                    "Procesos de Infraestructura",
-                    "Procesos Financieros"
-                ],
-                correct: 0,
-                exp: "El mantenimiento es un proceso técnico primario orientado a modificar o corregir el software tras su entrega."
-            },
-            {
-                q: "En el estándar IEEE 829, ¿qué registro detalla los fallos encontrados durante la ejecución de las pruebas?",
-                options: [
-                    "Informe de Incidentes / Anomaly Log (Bug Log)",
-                    "Especificación de Diseño",
-                    "Acta de Constitución",
-                    "Matriz de Roles"
-                ],
-                correct: 0,
-                exp: "El informe de incidentes o Bug Log registra el ID del error, pasos para reproducirlo, severidad y estado de corrección."
-            },
-            {
-                q: "¿Qué caracteriza al Modelo en V (V-Model)?",
-                options: [
-                    "Cada fase de desarrollo tiene una fase de prueba correspondiente de forma simétrica.",
-                    "No requiere fases de diseño ni arquitectura.",
-                    "Es un modelo exclusivo para bases de datos no relacionales.",
-                    "Se ejecuta únicamente en servidores en la nube."
-                ],
-                correct: 0,
-                exp: "El Modelo en V relaciona directamente cada etapa de desarrollo (ej. requisitos) con su correspondiente nivel de prueba (ej. pruebas de aceptación)."
-            },
-            {
-                q: "Dentro de la gestión de calidad, ¿qué diferencia a QA (Aseguramiento) de QC (Control de Calidad)?",
-                options: [
-                    "QA se enfoca en el PROCESO (prevención); QC se enfoca en el PRODUCTO (detección).",
-                    "QA es realizado por los clientes; QC es realizado por los programadores.",
-                    "QA solo aplica a hardware; QC solo aplica a software.",
-                    "No existe ninguna diferencia técnica entre ambos."
-                ],
-                correct: 0,
-                exp: "QA busca prevenir fallos mejorando los procesos; QC audita y prueba el producto final para detectar defectos."
-            },
-            {
-                q: "¿Qué es la Matriz de Trazabilidad de Requisitos?",
-                options: [
-                    "Un documento que vincula cada requisito con sus pruebas y casos de uso correspondientes.",
-                    "Un diagrama de flujo de la base de datos.",
-                    "Un informe contable sobre el costo por hora de cada desarrollador.",
-                    "Un archivo ejecutable de pruebas unitarias."
-                ],
-                correct: 0,
-                exp: "La matriz de trazabilidad asegura que todos los requisitos tengan casos de prueba asociados y sean verificados."
-            },
-            {
-                q: "En ISO 37000, los principios de 'Rendición de Cuentas' y 'Transparencia' pertenecen al ámbito de:",
-                options: [
-                    "Gobernanza Organizacional",
-                    "Compilación de código",
-                    "Instalación de drivers",
-                    "Ventas al por menor"
-                ],
-                correct: 0,
-                exp: "Son principios rectores de la gobernanza para asegurar que las decisiones organizacionales sean éticas y verificables."
-            },
-            {
-                q: "En pruebas de software, ¿qué es un 'Valor Límite' (Boundary Value)?",
-                options: [
-                    "Valores situados en los extremos o bordes de las condiciones de entrada (ej. 0, 1, 100).",
-                    "El precio máximo que el cliente está dispuesto a pagar por el software.",
-                    "La cantidad máxima de líneas de código por archivo.",
-                    "La velocidad de internet del usuario."
-                ],
-                correct: 0,
-                exp: "Las pruebas de valores límite evalúan las fronteras de validación, donde ocurre la mayor frecuencia de errores."
-            },
-            {
-                q: "¿Cuál es el objetivo de las Pruebas de Regresión?",
-                options: [
-                    "Verificar que los cambios recientes o correcciones no hayan roto funcionalidades previamente operativas.",
-                    "Demoler la base de datos al finalizar el proyecto.",
-                    "Traducir el código a un lenguaje anterior.",
-                    "Evaluar la velocidad de escritura del programador."
-                ],
-                correct: 0,
-                exp: "Las pruebas de regresión confirman que el código modificado no afecte negativamente áreas del software que ya funcionaban."
-            },
-            {
-                q: "En el estándar ISO/IEC/IEEE 12207, el proceso de 'Revisión Conjunta' (Joint Review) busca:",
-                options: [
-                    "Evaluar el estado y los resultados de las actividades del proyecto entre las partes involucradas.",
-                    "Programar en simultáneo con dos teclados.",
-                    "Vender licencias de software a terceros.",
-                    "Instalar actualizaciones del sistema operativo."
-                ],
-                correct: 0,
-                exp: "Las revisiones conjuntas permiten que clientes y desarrolladores evalúen los avances técnicos y acuerdos del proyecto."
-            },
-            {
-                q: "¿Qué es una Prueba Unitaria (Unit Test)?",
-                options: [
-                    "Prueba que verifica una función o componente aislado del código de manera individual.",
-                    "Una prueba que involucra a todo el equipo de ventas.",
-                    "Una auditoría de la infraestructura de red.",
-                    "Un test de estrés con 10,000 usuarios simulados."
-                ],
-                correct: 0,
-                exp: "La prueba unitaria valida el comportamiento de la unidad más pequeña de código probable de forma aislada."
-            },
-            {
-                q: "¿Qué estándar se enfoca en el Proceso Personal de Software (PSP) para desarrolladores individuales?",
-                options: [
-                    "PSP (Personal Software Process)",
-                    "ISO 9001",
-                    "IEEE 829",
-                    "Scrum Guide"
-                ],
-                correct: 0,
-                exp: "PSP proporciona técnicas cuantitativas para que los desarrolladores gestionen su tiempo, estimaciones y calidad individual."
-            },
-            {
-                q: "En IEEE 829, ¿qué significa que un caso de prueba sea 'Reproducible'?",
-                options: [
-                    "Que cualquier persona con las mismas precondiciones y pasos obtendrá siempre el mismo resultado.",
-                    "Que puede duplicarse automáticamente en múltiples carpetas.",
-                    "Que se graba en un archivo de audio MP3.",
-                    "Que no requiere datos de entrada."
-                ],
-                correct: 0,
-                exp: "Un caso reproducible garantiza consistencia: mismos datos e instrucciones producen el mismo resultado esperado."
-            },
-            {
-                q: "Según las mejores prácticas de calidad, ¿por qué se recomienda que un desarrollador NO pruebe exclusivamente su propio código?",
-                options: [
-                    "Para evitar sesgos cognitivos y 'puntos ciegos' en la detección de fallos de su propia lógica.",
-                    "Porque está prohibido por las leyes internacionales.",
-                    "Porque los desarrolladores no saben usar navegadores.",
-                    "Para duplicar el tiempo de cobro por hora."
-                ],
-                correct: 0,
-                exp: "El creador del código tiende involuntariamente a omitir escenarios límite o asumir que sus flujos son infalibles (sesgo de autor)."
-            }
-        ];
+  <!-- ================================================================= -->
+  <!-- COMPLETE JAVASCRIPT LOGIC & 32-QUESTION DATASET -->
+  <!-- ================================================================= -->
+  <script>
+    // 32 FULL TECHNICAL QUESTIONS DATABASE
+    const rawQuestionsDB = [
+      // --- ISO/IEC/IEEE 12207 ---
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿Cuál es el propósito fundamental del estándar internacional ISO/IEC/IEEE 12207?",
+        options: [
+          "Definir un marco de referencia estructurado para todos los procesos del ciclo de vida del software desde la concepción hasta el retiro.",
+          "Establecer la tabla de precios y costos de licencias para proyectos de software público.",
+          "Sustituir los lenguajes de programación tradicionales por pseudocódigo estandarizado.",
+          "Estandarizar únicamente la interfaz gráfica y experiencia de usuario."
+        ],
+        correctIndex: 0,
+        explanation: "ISO/IEC/IEEE 12207 establece un marco uniforme para adquisición, suministro, desarrollo, operación, mantenimiento y retiro del software."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "Dentro de la arquitectura de procesos de la ISO 12207, ¿cuál de los siguientes se clasifica como un Proceso de Soporte (Supporting Process)?",
+        options: [
+          "Proceso de Aseguramiento de Calidad (QA)",
+          "Proceso de Diseño Arquitectónico",
+          "Proceso de Adquisición de Software",
+          "Proceso de Integración del Sistema"
+        ],
+        correctIndex: 0,
+        explanation: "QA, Verificación, Validación, Gestión de Configuración y Auditorías son Procesos de Soporte cuya meta es respaldar a otros procesos."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿Cuál es la diferencia conceptual entre Verificación y Validación según la ISO 12207?",
+        options: [
+          "Verificación evalúa si el producto cumple con las especificaciones dadas; Validación evalúa si satisface las necesidades del usuario en su entorno real.",
+          "Verificación es ejecutada por clientes; Validación por programadores junior.",
+          "Verificación aplica sólo a código fuente C++; Validación aplica a bases de datos SQL.",
+          "Ambos términos representan exactamente la misma actividad técnica."
+        ],
+        correctIndex: 0,
+        explanation: "Verificación = ¿Construimos el producto correctamente? (Especificaciones). Validación = ¿Construimos el producto correcto? (Necesidad del usuario)."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿En qué categoría de la norma ISO 12207 se ubican la Gestión de Portafolio y la Gestión del Conocimiento?",
+        options: [
+          "Procesos Organizacionales de Habilitación de Proyectos",
+          "Procesos Técnicos del Sistema",
+          "Procesos de Soporte Operativo",
+          "Procesos de Acuerdo Comercial"
+        ],
+        correctIndex: 0,
+        explanation: "Los Procesos Organizacionales de Habilitación garantizan los activos, recursos e infraestructura corporativa para ejecutar proyectos."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿Qué proceso de la ISO 12207 gestiona las modificaciones del sistema puesto en producción para corregir defectos o mejorar rendimiento?",
+        options: [
+          "Proceso de Mantenimiento",
+          "Proceso de Transición",
+          "Proceso de Despliegue",
+          "Proceso de Calificación"
+        ],
+        correctIndex: 0,
+        explanation: "El Proceso de Mantenimiento gestiona modificaciones correctivas, adaptativas, perfectivas y preventivas post-entrega."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "Cuando un producto alcanza el final de su vida útil, ¿qué proceso de la ISO 12207 se encarga de darlo de baja de forma ordenada y segura?",
+        options: [
+          "Proceso de Retiro (Disposal / Retirement)",
+          "Proceso de Cancelación de Licencias",
+          "Proceso de Destrucción Física",
+          "Proceso de Auditoría Estática"
+        ],
+        correctIndex: 0,
+        explanation: "El Proceso de Retiro finaliza la operación de un sistema asegurando la migración o archivo de datos críticos."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿Qué proceso técnico de la ISO 12207 asigna los requisitos del sistema a elementos de software estructurados?",
+        options: [
+          "Proceso de Definición de Arquitectura (Diseño)",
+          "Proceso de Compilación de Código",
+          "Proceso de Inspección de Hardware",
+          "Proceso de Evaluación Financiera"
+        ],
+        correctIndex: 0,
+        explanation: "El Proceso de Definición de Arquitectura transforma requerimientos en una estructura coherente de módulos de software."
+      },
 
-        // Estado Global de la App
-        let questions = [];
-        let currentIndex = 0;
-        let currentMode = 'exam'; // 'exam' o 'study'
-        let userAnswers = {};
-        let timeRemaining = 1200; // 20 min
-        let timerInterval = null;
+      // --- MODELOS DE CICLOS DE VIDA (SDLC) ---
+      {
+        category: "Ciclos de Vida del Software",
+        question: "¿Cuál es la característica definitoria del Modelo en Cascada (Waterfall)?",
+        options: [
+          "Avance secuencial e inmutable por fases fijas donde cada etapa depende de los entregables aprobados de la anterior.",
+          "Construcción sin documentación donde los requerimientos cambian diariamente.",
+          "Análisis de riesgos continuo en ciclos helicoidales.",
+          "Despliegues automáticos a producción cada 10 minutos."
+        ],
+        correctIndex: 0,
+        explanation: "Cascada es un paradigma rígido y secuencial que exige completar y aprobar cada fase antes de iniciar la siguiente."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "¿Qué elemento caracteriza de forma única al Modelo en Espiral de Barry Boehm?",
+        options: [
+          "La identificación y mitigación sistemática de riesgos en cada iteración.",
+          "La eliminación completa de la etapa de pruebas.",
+          "El uso obligatorio de servicios en la nube.",
+          "La contratación exclusiva de desarrolladores sénior."
+        ],
+        correctIndex: 0,
+        explanation: "El Modelo en Espiral estructura el desarrollo en cuadrantes centrados en el análisis continuo de riesgos."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "En el marco de trabajo ágil Scrum, ¿quién es el responsable directo de priorizar el Product Backlog según el valor de negocio?",
+        options: [
+          "El Product Owner",
+          "El Scrum Master",
+          "El Líder de Pruebas (QA Lead)",
+          "El Gerente de Infraestructura"
+        ],
+        correctIndex: 0,
+        explanation: "El Product Owner representa la voz del cliente y del negocio, gestionando y priorizando los ítems del Product Backlog."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "¿Qué ventaja clave aporta el Modelo Incremental en comparación con el Modelo en Cascada?",
+        options: [
+          "Entregar bloques de funcionalidad operativa de valor de forma temprana en cada versión.",
+          "Eliminar el presupuesto económico del proyecto.",
+          "Evitar la realización de reuniones de equipo.",
+          "Garantizar que el software nunca tenga errores."
+        ],
+        correctIndex: 0,
+        explanation: "El Modelo Incremental entrega software parcial operable al usuario en versiones progresivas."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "¿Cuál de las siguientes afirmaciones contradice el Manifiesto Ágil?",
+        options: [
+          "Seguir estrictamente un plan cerrado por encima de responder ante el cambio.",
+          "Valorar a los individuos e interacciones sobre procesos y herramientas.",
+          "Valorar software funcionando sobre documentación exhaustiva.",
+          "Valorar la colaboración con el cliente sobre la negociación contractual."
+        ],
+        correctIndex: 0,
+        explanation: "El valor ágil establece 'Respuesta ante el cambio sobre el seguimiento de un plan'."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "En Scrum, ¿cuál es el objetivo central de la reunión diaria denominada Daily Scrum?",
+        options: [
+          "Sincronizar actividades de 15 minutos para evaluar el avance hacia el Sprint Goal e identificar bloqueos.",
+          "Aprobar las horas extras y el salario del equipo.",
+          "Presentar la demostración final del producto a los accionistas.",
+          "Impartir capacitaciones técnicas en lenguajes de programación."
+        ],
+        correctIndex: 0,
+        explanation: "La Daily Scrum es un evento breve de sincronización diaria para inspeccionar el progreso e identificar impedimentos."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "¿Cuándo es más recomendable utilizar el Modelo en Cascada en lugar de un enfoque Ágil?",
+        options: [
+          "Cuando los requerimientos son altamente estables, fijos y existe exigencia normativa rigurosa.",
+          "Cuando el cliente no tiene claros los requerimientos.",
+          "Cuando se requiere un producto mínimo viable en dos semanas.",
+          "Cuando el equipo no tiene experiencia documentando."
+        ],
+        correctIndex: 0,
+        explanation: "Cascada es ideal cuando los requerimientos son inmuta bles y conocidos desde el día uno."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "En el Modelo V, ¿con qué fase del ciclo de desarrollo se alinean directamente las Pruebas de Aceptación?",
+        options: [
+          "Con la fase de Análisis de Requerimientos de Usuario.",
+          "Con el diseño de algoritmos de bajo nivel.",
+          "Con la compilación de código fuente.",
+          "Con el mantenimiento correctivo."
+        ],
+        correctIndex: 0,
+        explanation: "El Modelo V conecta la fase de Requerimientos con su respectiva etapa de validación: Las Pruebas de Aceptación."
+      },
 
-        // Inicializar App
-        window.onload = function() {
-            shuffleAndPrepareQuestions();
-            renderQuestion();
-            updateNavigation();
+      // --- IEEE 829 ---
+      {
+        category: "IEEE 829",
+        question: "¿Cuál es el propósito central del estándar internacional IEEE 829?",
+        options: [
+          "Definir el conjunto estandarizado y formato de los documentos utilizados en las pruebas de software.",
+          "Establecer protocolos de cableado físico para redes de datos.",
+          "Regular las tarifas presupuestales de los proyectos tecnológicos.",
+          "Definir la sintaxis de lenguaje SQL para bases de datos."
+        ],
+        correctIndex: 0,
+        explanation: "IEEE 829 especifica el formato formal y contenido de la documentación producida durante el testing."
+      },
+      {
+        category: "IEEE 829",
+        question: "Según IEEE 829, ¿qué artefacto define el alcance, estrategia, recursos, calendario y criterios de salida de las pruebas?",
+        options: [
+          "Test Plan (Plan de Pruebas)",
+          "Test Log (Bitácora de Pruebas)",
+          "Test Incident Report (Reporte de Defectos)",
+          "Test Script Checklist"
+        ],
+        correctIndex: 0,
+        explanation: "El Test Plan es el documento maestro que establece la estrategia general y gestión de las pruebas."
+      },
+      {
+        category: "IEEE 829",
+        question: "¿Qué documento de la IEEE 829 registra la ejecución cronológica detallada de las pruebas con marcas de tiempo?",
+        options: [
+          "Test Log (Bitácora de Pruebas)",
+          "Test Summary Report",
+          "Test Design Specification",
+          "Test Suite Hierarchy"
+        ],
+        correctIndex: 0,
+        explanation: "El Test Log es la bitácora donde se registran los eventos y resultados producidos durante la ejecución."
+      },
+      {
+        category: "IEEE 829",
+        question: "Cuando se detecta una falla durante la ejecución de una prueba, ¿qué documento formal exige la IEEE 829 para reportarla?",
+        options: [
+          "Test Incident Report (Reporte de Incidentes de Prueba)",
+          "Test Plan Amendment",
+          "User Acceptance Certificate",
+          "System Requirement Notice"
+        ],
+        correctIndex: 0,
+        explanation: "El Test Incident Report documenta todo error o discrepancia detectada durante las pruebas para su seguimiento."
+      },
+      {
+        category: "IEEE 829",
+        question: "¿Qué contenido detalla el artefacto Test Case Specification en IEEE 829?",
+        options: [
+          "Las entradas precisas, condiciones de ejecución y resultados esperados para evaluar una función concreta.",
+          "El contrato de trabajo de los ingenieros de calidad.",
+          "Las licencias de software comercial compradas.",
+          "El código fuente completo de la aplicación web."
+        ],
+        correctIndex: 0,
+        explanation: "La Especificación de Caso de Prueba define las entradas exactas, pasos y resultados esperados para verificar un requerimiento."
+      },
+      {
+        category: "IEEE 829",
+        question: "¿Qué documento según IEEE 829 resume las actividades ejecutadas, métricas de fallos y respalda la decisión de salida a producción?",
+        options: [
+          "Test Summary Report (Informe Resumen de Pruebas)",
+          "Test Design Specification",
+          "Test Procedure Specification",
+          "Test Environment Checklist"
+        ],
+        correctIndex: 0,
+        explanation: "El Test Summary Report sintetiza las evaluaciones obtenidas y respalda la liberación del sistema."
+      },
+      {
+        category: "IEEE 829",
+        question: "En IEEE 829, ¿cuál es la función del Test Procedure Specification?",
+        options: [
+          "Describir la secuencia instruccional exacta de pasos para ejecutar los casos de prueba.",
+          "Calcular el costo por hora de trabajo de los testers.",
+          "Diseñar el esquema de tablas de la base de datos.",
+          "Aprobar la facturación del proyecto."
+        ],
+        correctIndex: 0,
+        explanation: "El Test Procedure Specification (o Script) especifica los pasos secuenciales detallados para ejecutar una prueba."
+      },
+
+      // --- ISO 37000 ---
+      {
+        category: "ISO 37000",
+        question: "¿Cuál es el enfoque principal de la norma internacional ISO 37000?",
+        options: [
+          "Proporcionar una guía global sobre la Gobernanza de las Organizaciones.",
+          "Definir algoritmos de encriptación para transacciones financieras.",
+          "Establecer la norma de ensamblaje de componentes de hardware.",
+          "Certificar la velocidad de proveedores de internet."
+        ],
+        correctIndex: 0,
+        explanation: "ISO 37000 orienta a los órganos de gobierno corporativo a dirigir con ética, eficacia y responsabilidad."
+      },
+      {
+        category: "ISO 37000",
+        question: "En el marco de la ISO 37000, ¿cuál es la distinción fundamental entre Gobernanza y Gestión (Management)?",
+        options: [
+          "La Gobernanza orienta, evalúa y supervisa la estrategia; la Gestión ejecuta e implementa las operaciones diarias.",
+          "Gobernanza es realizada por empleados junior; Gestión por la mesa directiva.",
+          "Son términos totalmente idénticos.",
+          "Gobernanza aplica únicamente a empresas del sector público."
+        ],
+        correctIndex: 0,
+        explanation: "Gobernanza (Mesa Directiva) = Dirige, evalúa y supervisa. Gestión (Gerencia Operativa) = Ejecuta y administra."
+      },
+      {
+        category: "ISO 37000",
+        question: "Según el principio de Propósito en ISO 37000, ¿qué responsabilidad tiene el órgano de gobierno?",
+        options: [
+          "Definir claramente la razón de ser de la organización para generar valor sostenible alineado con sus partes interesadas.",
+          "Maximizar ganancias financieras a corto plazo ignorando el entorno social.",
+          "Supervisar el horario de ingreso del personal operativo.",
+          "Escribir los manuales técnicos del software."
+        ],
+        correctIndex: 0,
+        explanation: "El Principio de Propósito exige definir la razón de ser para generar valor con impacto positivo sostenible."
+      },
+      {
+        category: "ISO 37000",
+        question: "¿Qué principio de la ISO 37000 exige a la junta directiva considerar la incertidumbre al tomar decisiones estratégicas?",
+        options: [
+          "Gobernanza del Riesgo",
+          "Gestión de Nómina",
+          "Mantenimiento de Servidores",
+          "Diseño de Interfaces"
+        ],
+        correctIndex: 0,
+        explanation: "La Gobernanza del Riesgo evalúa la incertidumbre para salvaguardar el valor corporativo."
+      },
+      {
+        category: "ISO 37000",
+        question: "¿Cómo se relaciona la Gobernanza de TI con la ISO 37000?",
+        options: [
+          "La Gobernanza de TI aplica los principios de la gobernanza organizacional (ISO 37000) a los activos tecnológicos.",
+          "Son conceptos totalmente incompatibles.",
+          "La Gobernanza de TI elimina la necesidad de tener junta directiva.",
+          "ISO 37000 prohíbe el uso de tecnología."
+        ],
+        correctIndex: 0,
+        explanation: "La Gobernanza de TI alinea las inversiones tecnológicas con el propósito y estrategia fijados por la gobernanza corporativa."
+      },
+
+      // --- ESCENARIOS Y SÍNTESIS ---
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "Un equipo necesita asegurar que un módulo crítico de aviación cumple normativas de seguridad. Según ISO 12207, ¿qué proceso aplica?",
+        options: [
+          "Proceso de Auditoría y Verificación",
+          "Proceso de Mercadeo",
+          "Proceso de Venta Directa",
+          "Proceso de Instalación en Servidores"
+        ],
+        correctIndex: 0,
+        explanation: "Las auditorías e inspecciones de verificación aseguran el cumplimiento riguroso de normativas críticas."
+      },
+      {
+        category: "Ciclos de Vida del Software",
+        question: "Una startup busca lanzar una app innovadora donde los requerimientos cambian semana a semana. ¿Qué enfoque SDLC es el más adecuado?",
+        options: [
+          "Desarrollo Ágil / Iterativo (Scrum)",
+          "Modelo en Cascada rígido",
+          "Modelo V sin prototipos",
+          "Desarrollo manual en lenguaje máquina"
+        ],
+        correctIndex: 0,
+        explanation: "Los marcos ágiles permiten validar hipótesis e incorporar cambios rápidamente mediante iteraciones cortas."
+      },
+      {
+        category: "IEEE 829",
+        question: "Para reproducir un fallo recurrente de base de datos reportado en un Incident Report, ¿qué documento IEEE 829 guía el escenario paso a paso?",
+        options: [
+          "Test Case Specification / Test Procedure Specification",
+          "Test Budget Plan",
+          "User Contract",
+          "Server License Specification"
+        ],
+        correctIndex: 0,
+        explanation: "Test Case y Test Procedure detallan los datos exactos y los pasos instruccionales para reproducir el escenario de prueba."
+      },
+      {
+        category: "ISO 37000",
+        question: "¿Qué principio de ISO 37000 exige transparencia ética sobre las decisiones estratégicas y desempeño ante las partes interesadas?",
+        options: [
+          "Principio de Rendición de Cuentas y Responsabilidad (Accountability)",
+          "Principio de Secreto Comercial Absoluto",
+          "Principio de Reducción de Costos",
+          "Principio de Programación Rápida"
+        ],
+        correctIndex: 0,
+        explanation: "El principio de Rendición de Cuentas demanda transparencia ética sobre los impactos de las decisiones tomadas."
+      },
+      {
+        category: "ISO/IEC/IEEE 12207",
+        question: "¿Qué proceso de ISO 12207 se encarga de instalar el sistema en el entorno del cliente y lograr su aceptación operativa?",
+        options: [
+          "Proceso de Transición / Despliegue",
+          "Proceso de Codificación",
+          "Proceso de Compilación",
+          "Proceso de Contratación"
+        ],
+        correctIndex: 0,
+        explanation: "El proceso de Transición instala el software en producción y gestiona la aceptación operativa formal."
+      }
+    ];
+
+    // STATE VARIABLES
+    let processedQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let quizMode = 'exam';
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let userAnswers = [];
+
+    // UTILITY: FISHER-YATES SHUFFLE
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // PREPARE QUESTIONS (SHUFFLE OPTIONS AND MAP CORRECT INDEX)
+    function prepareQuestions() {
+      return rawQuestionsDB.map((qItem, qIdx) => {
+        const optionsWithIdx = qItem.options.map((opt, idx) => ({
+          text: opt,
+          isCorrect: idx === qItem.correctIndex
+        }));
+
+        const shuffledOptions = shuffleArray(optionsWithIdx);
+        const newCorrectIdx = shuffledOptions.findIndex(o => o.isCorrect);
+
+        return {
+          id: qIdx + 1,
+          category: qItem.category,
+          question: qItem.question,
+          options: shuffledOptions.map(o => o.text),
+          correctIndex: newCorrectIdx,
+          explanation: qItem.explanation
         };
+      });
+    }
 
-        // Algoritmo de Aleatorización (Fisher-Yates) para Preguntas y Respuestas
-        function shuffleAndPrepareQuestions() {
-            // Clonar preguntas
-            let cloned = JSON.parse(JSON.stringify(rawQuestions));
-            
-            // Mezclar preguntas
-            for (let i = cloned.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
-            }
+    // TAB NAVIGATION
+    function showTab(tabName) {
+      document.getElementById('tab-study').classList.add('hidden');
+      document.getElementById('tab-quiz-config').classList.add('hidden');
+      document.getElementById('tab-quiz').classList.add('hidden');
+      document.getElementById('tab-report').classList.add('hidden');
 
-            // Mezclar opciones de cada pregunta y reasignar índice correcto
-            questions = cloned.map(item => {
-                let optionsWithOriginalIndex = item.options.map((opt, idx) => ({
-                    text: opt,
-                    isCorrect: idx === item.correct
-                }));
+      ['study', 'quiz', 'report'].forEach(name => {
+        const btn = document.getElementById(`nav-${name}`);
+        if(btn) {
+          btn.className = "glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 text-slate-300";
+        }
+      });
 
-                // Mezclar opciones
-                for (let i = optionsWithOriginalIndex.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [optionsWithOriginalIndex[i], optionsWithOriginalIndex[j]] = [optionsWithOriginalIndex[j], optionsWithOriginalIndex[i]];
-                }
+      let activeNav = 'study';
+      if (tabName === 'quiz-config' || tabName === 'quiz') activeNav = 'quiz';
+      if (tabName === 'report') activeNav = 'report';
 
-                return {
-                    q: item.q,
-                    options: optionsWithOriginalIndex.map(o => o.text),
-                    correct: optionsWithOriginalIndex.findIndex(o => o.isCorrect),
-                    exp: item.exp
-                };
-            });
+      const activeBtn = document.getElementById(`nav-${activeNav}`);
+      if(activeBtn) {
+        activeBtn.className = "glass-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 text-white border-white/30 bg-white/15 shadow-lg shadow-indigo-500/20";
+      }
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    }
+
+    // STUDY SEARCH FILTER
+    function filterStudyCards() {
+      const term = document.getElementById('study-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.theory-card');
+
+      cards.forEach(card => {
+        const keywords = card.getAttribute('data-keywords').toLowerCase();
+        const content = card.innerText.toLowerCase();
+
+        if (keywords.includes(term) || content.includes(term)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    // START QUIZ MODE
+    function startQuizMode(mode) {
+      quizMode = mode;
+      processedQuestions = shuffleArray(prepareQuestions());
+      currentQuestionIndex = 0;
+      score = 0;
+      secondsElapsed = 0;
+      userAnswers = [];
+
+      document.getElementById('quiz-total-num').innerText = processedQuestions.length;
+      document.getElementById('quiz-score-count').innerText = '0';
+      
+      const badge = document.getElementById('quiz-mode-badge');
+      if (mode === 'exam') {
+        badge.innerText = "Modo Examen";
+        badge.className = "bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-xl text-xs font-bold uppercase";
+      } else {
+        badge.innerText = "Modo Práctica";
+        badge.className = "bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-3 py-1 rounded-xl text-xs font-bold uppercase";
+      }
+
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        updateTimerDisplay();
+      }, 1000);
+
+      renderQuestion();
+      showTab('quiz');
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+      const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+      document.getElementById('quiz-timer').innerText = `${mins}:${secs}`;
+    }
+
+    // RENDER QUESTION
+    function renderQuestion() {
+      const q = processedQuestions[currentQuestionIndex];
+
+      document.getElementById('quiz-current-num').innerText = currentQuestionIndex + 1;
+      const progressPercent = ((currentQuestionIndex + 1) / processedQuestions.length) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      document.getElementById('question-category').innerText = q.category;
+      document.getElementById('question-text').innerText = q.question;
+
+      document.getElementById('explanation-box').classList.add('hidden');
+
+      const nextBtn = document.getElementById('btn-next');
+      nextBtn.disabled = true;
+      nextBtn.className = "glass-btn text-slate-500 font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center space-x-2 cursor-not-allowed";
+
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `option-btn-${idx}`;
+        btn.className = "glass-card w-full text-left p-4 rounded-xl text-slate-200 text-xs sm:text-sm font-medium flex items-start space-x-3 transition-all hover:border-indigo-400 group";
+        btn.onclick = () => selectOption(idx);
+
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-lg bg-slate-900/80 border border-white/10 text-indigo-300 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-indigo-600 group-hover:text-white transition-colors">${String.fromCharCode(65 + idx)}</span>
+          <span class="flex-grow pt-0.5">${optText}</span>
+        `;
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // SELECT OPTION
+    function selectOption(selectedIndex) {
+      if (userAnswers[currentQuestionIndex] !== undefined) return;
+
+      const q = processedQuestions[currentQuestionIndex];
+      const isCorrect = (selectedIndex === q.correctIndex);
+
+      userAnswers[currentQuestionIndex] = {
+        questionId: q.id,
+        selectedIndex: selectedIndex,
+        isCorrect: isCorrect
+      };
+
+      if (isCorrect) {
+        score += 10;
+        document.getElementById('quiz-score-count').innerText = score;
+      }
+
+      // Format options
+      q.options.forEach((_, idx) => {
+        const btn = document.getElementById(`option-btn-${idx}`);
+        btn.disabled = true;
+
+        if (quizMode === 'practice') {
+          if (idx === q.correctIndex) {
+            btn.className = "w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-start space-x-3 bg-emerald-500/20 border-2 border-emerald-400 text-emerald-200 shadow-lg shadow-emerald-500/20";
+            btn.querySelector('span').className = "w-6 h-6 rounded-lg bg-emerald-500 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5";
+          } else if (idx === selectedIndex && !isCorrect) {
+            btn.className = "w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-start space-x-3 bg-rose-500/20 border-2 border-rose-400 text-rose-200 shadow-lg shadow-rose-500/20";
+            btn.querySelector('span').className = "w-6 h-6 rounded-lg bg-rose-500 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5";
+          } else {
+            btn.className = "glass-card w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-start space-x-3 opacity-40";
+          }
+        } else {
+          if (idx === selectedIndex) {
+            btn.className = "w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-start space-x-3 bg-indigo-500/30 border-2 border-indigo-400 text-white shadow-lg shadow-indigo-500/20";
+            btn.querySelector('span').className = "w-6 h-6 rounded-lg bg-indigo-500 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5";
+          } else {
+            btn.className = "glass-card w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-start space-x-3 opacity-50";
+          }
+        }
+      });
+
+      // Show Practice Feedback Box
+      if (quizMode === 'practice') {
+        const expBox = document.getElementById('explanation-box');
+        const expTitle = document.getElementById('explanation-title');
+        const expText = document.getElementById('explanation-text');
+
+        if (isCorrect) {
+          expBox.className = "p-4 rounded-xl text-xs sm:text-sm leading-relaxed border bg-emerald-500/15 border-emerald-400/30 text-emerald-200";
+          expTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i> ¡Respuesta Correcta!`;
+        } else {
+          expBox.className = "p-4 rounded-xl text-xs sm:text-sm leading-relaxed border bg-rose-500/15 border-rose-400/30 text-rose-200";
+          expTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400 mr-2"></i> Respuesta Incorrecta`;
         }
 
-        // Cambiar Modo
-        function setMode(mode) {
-            currentMode = mode;
-            const btnExam = document.getElementById('btn-exam');
-            const btnStudy = document.getElementById('btn-study');
-            const timerEl = document.getElementById('timer');
+        expText.innerText = q.explanation;
+        expBox.classList.remove('hidden');
+      }
 
-            if (mode === 'exam') {
-                btnExam.className = "glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border-indigo-500/50 bg-indigo-600/30 text-white";
-                btnStudy.className = "glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-slate-300";
-                timerEl.classList.remove('hidden');
-                startTimer();
-            } else {
-                btnStudy.className = "glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border-cyan-500/50 bg-cyan-600/30 text-white";
-                btnExam.className = "glass-btn p-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-slate-300";
-                timerEl.classList.add('hidden');
-                clearInterval(timerInterval);
-            }
-            renderQuestion();
+      // Enable Next Button
+      const nextBtn = document.getElementById('btn-next');
+      nextBtn.disabled = false;
+      nextBtn.className = "bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-lg shadow-indigo-500/25 cursor-pointer flex items-center space-x-2";
+      
+      if (currentQuestionIndex === processedQuestions.length - 1) {
+        nextBtn.innerHTML = `<span>Finalizar Evaluación</span> <i class="fa-solid fa-chart-pie text-xs"></i>`;
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < processedQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function confirmExitQuiz() {
+      if (confirm('¿Deseas abandonar la evaluación activa? Se perderá el progreso.')) {
+        clearInterval(timerInterval);
+        showTab('study');
+      }
+    }
+
+    // FINISH QUIZ AND GENERATE REPORT
+    function finishQuiz() {
+      clearInterval(timerInterval);
+
+      document.getElementById('nav-report').classList.remove('hidden');
+
+      const totalQs = processedQuestions.length;
+      const correctCount = userAnswers.filter(a => a && a.isCorrect).length;
+      const percentage = Math.round((correctCount / totalQs) * 100);
+
+      document.getElementById('report-score-text').innerText = `${correctCount} / ${totalQs}`;
+      document.getElementById('report-percentage-text').innerText = `${percentage}%`;
+
+      const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+      const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+      document.getElementById('report-time-text').innerText = `${mins}:${secs}`;
+
+      const iconBg = document.getElementById('report-icon-bg');
+      const icon = document.getElementById('report-icon');
+      const statusTitle = document.getElementById('report-status-title');
+      const statusDesc = document.getElementById('report-status-desc');
+      const gradeText = document.getElementById('report-grade-text');
+
+      if (percentage >= 85) {
+        iconBg.className = "w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl font-black bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 shadow-xl shadow-emerald-500/20";
+        icon.className = "fa-solid fa-trophy";
+        statusTitle.innerText = "¡Excelente Desempeño!";
+        statusDesc.innerText = "Has demostrado un dominio sobresaliente en los estándares de ingeniería y gobernanza.";
+        gradeText.innerText = "Sobresaliente";
+        gradeText.className = "text-2xl font-black text-emerald-400 mt-1";
+      } else if (percentage >= 70) {
+        iconBg.className = "w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl font-black bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 shadow-xl shadow-cyan-500/20";
+        icon.className = "fa-solid fa-award";
+        statusTitle.innerText = "¡Aprobado!";
+        statusDesc.innerText = "Buen nivel conceptual general. Revisa el desglose por categorías para reforzar los puntos débiles.";
+        gradeText.innerText = "Aprobado";
+        gradeText.className = "text-2xl font-black text-cyan-400 mt-1";
+      } else {
+        iconBg.className = "w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl font-black bg-amber-500/20 border border-amber-400/40 text-amber-400 shadow-xl shadow-amber-500/20";
+        icon.className = "fa-solid fa-book-bookmark";
+        statusTitle.innerText = "Requiere Refuerzo";
+        statusDesc.innerText = "Se recomienda repasar la guía teórica antes de intentar la evaluación nuevamente.";
+        gradeText.innerText = "No Aprobado";
+        gradeText.className = "text-2xl font-black text-amber-400 mt-1";
+      }
+
+      // CATEGORY BREAKDOWN
+      const catStats = {};
+      processedQuestions.forEach((q, idx) => {
+        if (!catStats[q.category]) catStats[q.category] = { total: 0, correct: 0 };
+        catStats[q.category].total++;
+        if (userAnswers[idx] && userAnswers[idx].isCorrect) {
+          catStats[q.category].correct++;
         }
+      });
 
-        // Timer para Modo Examen
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                let m = Math.floor(timeRemaining / 60);
-                let s = timeRemaining % 60;
-                document.getElementById('timer').innerHTML = `<i class="fa-regular fa-clock"></i> ${m}:${s < 10 ? '0' : ''}${s}`;
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    finishQuiz();
-                }
-            }, 1000);
-        }
+      const catContainer = document.getElementById('category-breakdown-container');
+      catContainer.innerHTML = '';
 
-        // Renderizar Pregunta
-        function renderQuestion() {
-            const currentQ = questions[currentIndex];
-            document.getElementById('question-badge').innerText = `Pregunta ${currentIndex + 1}/${questions.length}`;
-            document.getElementById('question-text').innerText = currentQ.q;
-            
-            // Barra de Progreso
-            const progressPct = ((currentIndex + 1) / questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+      Object.keys(catStats).forEach(catName => {
+        const stat = catStats[catName];
+        const catPercent = Math.round((stat.correct / stat.total) * 100);
 
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
+        const div = document.createElement('div');
+        div.className = "space-y-1.5";
+        div.innerHTML = `
+          <div class="flex justify-between text-xs font-semibold text-slate-300">
+            <span>${catName}</span>
+            <span>${stat.correct} de ${stat.total} (${catPercent}%)</span>
+          </div>
+          <div class="w-full bg-slate-900/80 h-2.5 rounded-full overflow-hidden border border-white/10">
+            <div class="h-2.5 rounded-full transition-all duration-500 ${catPercent >= 80 ? 'bg-emerald-400' : (catPercent >= 60 ? 'bg-cyan-400' : 'bg-amber-400')}" style="width: ${catPercent}%"></div>
+          </div>
+        `;
+        catContainer.appendChild(div);
+      });
 
-            const expBox = document.getElementById('explanation-box');
-            expBox.classList.add('hidden');
+      // QUESTION REVIEW CARDS
+      const reviewContainer = document.getElementById('questions-review-list');
+      reviewContainer.innerHTML = '';
 
-            const hasAnswered = userAnswers.hasOwnProperty(currentIndex);
+      processedQuestions.forEach((q, idx) => {
+        const uAns = userAnswers[idx];
+        const isOk = uAns && uAns.isCorrect;
 
-            currentQ.options.forEach((optText, optIdx) => {
-                const btn = document.createElement('button');
-                btn.className = `option-card w-full text-left p-4 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between gap-3 text-slate-200`;
-                
-                let iconHTML = `<span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 shrink-0">${String.fromCharCode(65 + optIdx)}</span>`;
-                
-                btn.innerHTML = `
-                    <span class="leading-relaxed">${optText}</span>
-                    ${iconHTML}
-                `;
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border text-xs sm:text-sm space-y-2 ${isOk ? 'bg-emerald-500/10 border-emerald-400/30' : 'bg-rose-500/10 border-rose-400/30'}`;
+        
+        card.innerHTML = `
+          <div class="flex items-start justify-between font-bold">
+            <span class="${isOk ? 'text-emerald-300' : 'text-rose-300'}">
+              <i class="${isOk ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-circle-xmark text-rose-400'} mr-2"></i>
+              ${idx + 1}. ${q.question}
+            </span>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1 pl-6">
+            <p><strong>Tu respuesta:</strong> ${uAns !== undefined ? q.options[uAns.selectedIndex] : 'Sin responder'}</p>
+            ${!isOk ? `<p class="text-emerald-400 font-medium"><strong>Respuesta correcta:</strong> ${q.options[q.correctIndex]}</p>` : ''}
+          </div>
+          <p class="text-xs text-slate-400 bg-slate-950/60 p-3 rounded-lg border border-white/10 ml-6">${q.explanation}</p>
+        `;
 
-                // Si ya fue respondida (o en respuesta en modo estudio)
-                if (hasAnswered) {
-                    const selectedOpt = userAnswers[currentIndex];
-                    if (optIdx === currentQ.correct) {
-                        btn.classList.add('correct');
-                        btn.innerHTML += `<i class="fa-solid fa-circle-check text-emerald-400 text-base shrink-0"></i>`;
-                    } else if (optIdx === selectedOpt) {
-                        btn.classList.add('incorrect');
-                        btn.innerHTML += `<i class="fa-solid fa-circle-xmark text-rose-400 text-base shrink-0"></i>`;
-                    }
-                }
+        reviewContainer.appendChild(card);
+      });
 
-                btn.onclick = () => selectOption(optIdx);
-                optionsContainer.appendChild(btn);
-            });
+      showTab('report');
+    }
 
-            // Mostrar explicación si ya fue respondida en modo estudio
-            if (hasAnswered && currentMode === 'study') {
-                expBox.classList.remove('hidden');
-                document.getElementById('explanation-text').innerText = currentQ.exp;
-            }
-        }
-
-        // Seleccionar Opción (Validación Visual)
-        function selectOption(optIdx) {
-            userAnswers[currentIndex] = optIdx;
-            renderQuestion();
-        }
-
-        // Navegación
-        function nextQuestion() {
-            if (currentIndex < questions.length - 1) {
-                currentIndex++;
-                renderQuestion();
-                updateNavigation();
-            } else {
-                finishQuiz();
-            }
-        }
-
-        function prevQuestion() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-                updateNavigation();
-            }
-        }
-
-        function updateNavigation() {
-            document.getElementById('btn-prev').disabled = (currentIndex === 0);
-            const btnNext = document.getElementById('btn-next');
-            if (currentIndex === questions.length - 1) {
-                btnNext.innerHTML = `Finalizar <i class="fa-solid fa-check ml-1"></i>`;
-            } else {
-                btnNext.innerHTML = `Siguiente <i class="fa-solid fa-arrow-right ml-1"></i>`;
-            }
-        }
-
-        // Finalizar y Evaluar
-        function finishQuiz() {
-            clearInterval(timerInterval);
-            document.getElementById('quiz-container').classList.add('hidden');
-            const resultsContainer = document.getElementById('results-container');
-            resultsContainer.classList.remove('hidden');
-
-            let score = 0;
-            questions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) {
-                    score++;
-                }
-            });
-
-            const pct = Math.round((score / questions.length) * 100);
-
-            document.getElementById('final-score').innerText = `${score}/${questions.length}`;
-            document.getElementById('final-percentage').innerText = `${pct}%`;
-
-            const statusEl = document.getElementById('final-status');
-            if (pct >= 80) {
-                statusEl.innerText = "¡Aprobado Excelente!";
-                statusEl.className = "text-lg font-bold text-emerald-400";
-            } else if (pct >= 60) {
-                statusEl.innerText = "Aprobado Básico";
-                statusEl.className = "text-lg font-bold text-amber-400";
-            } else {
-                statusEl.innerText = "Requiere Repaso";
-                statusEl.className = "text-lg font-bold text-rose-400";
-            }
-        }
-
-        // Reiniciar
-        function restartQuiz() {
-            userAnswers = {};
-            currentIndex = 0;
-            timeRemaining = 1200;
-            document.getElementById('results-container').classList.add('hidden');
-            document.getElementById('quiz-container').classList.remove('hidden');
-            shuffleAndPrepareQuestions();
-            renderQuestion();
-            updateNavigation();
-            if (currentMode === 'exam') startTimer();
-        }
-    </script>
+    // INITIAL LOAD
+    window.onload = function() {
+      showTab('study');
+    };
+  </script>
 </body>
 </html>
